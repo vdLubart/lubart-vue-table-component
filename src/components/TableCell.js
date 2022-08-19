@@ -1,3 +1,5 @@
+import settings from "../settings";
+
 export default {
     functional: true,
 
@@ -6,17 +8,29 @@ export default {
     render(createElement, { props }) {
         const data = {};
 
+        data.class = "table-component__td";
+
         if (props.column.cellClass) {
-            data.class = props.column.cellClass;
+            data.class += " " + props.column.cellClass;
         }
 
+        if(settings.cellClass){
+            data.class += " " + settings.cellClass;
+        }
+
+        var cellLabel = createElement('h6', props.column.label);
+
         if (props.column.template) {
-            return createElement('td', data, props.column.template(props.row.data));
+            var cellData = props.column.template(props.row.data);
+            if(cellData !== undefined) {
+                cellData.unshift(createElement('h6', props.column.label + ":"));
+            }
+
+            return createElement('div', data, cellData);
         }
 
         data.domProps = {};
-        data.domProps.innerHTML = props.column.formatter(props.row.getValue(props.column.show), props.row.data);
 
-        return createElement('td', data);
-    },
+        return createElement('div', data, [ createElement('h6', props.column.label+":"), createElement('span', props.column.formatter(props.row.getValue(props.column.show), props.row.data)) ]);
+    }
 };

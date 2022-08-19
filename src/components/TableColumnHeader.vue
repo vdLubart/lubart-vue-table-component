@@ -1,5 +1,5 @@
 <template>
-    <th
+    <div
         @click="clicked"
         :class="headerClass"
         role="columnheader"
@@ -9,7 +9,7 @@
         v-if="this.isVisible"
     >
         {{ label }}
-    </th>
+    </div>
 </template>
 
 <script>

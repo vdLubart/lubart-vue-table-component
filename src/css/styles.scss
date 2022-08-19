@@ -1,0 +1,212 @@
+@import "variables";
+
+
+.table-component {
+    display: flex;
+    flex-direction: column;
+
+    .table-component__filter {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        > div{
+            position: relative;
+        }
+
+        .table-component__filter__clear {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2em;
+            color: $textColor;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    }
+
+    .table-component__table-wrapper {
+        overflow-x: auto;
+        margin: 1em 0;
+        width: 100%;
+        border: solid 1px $borderColor;
+    }
+
+    .table-component__table {
+        display: table;
+        min-width: 100%;
+        border-collapse: collapse;
+
+        a {
+            color: $linkColor;
+        }
+
+        .table-component__table__caption {
+            position: absolute;
+            top: auto;
+            left: -10000px;
+            overflow: hidden;
+            width: 1px;
+            height: 1px;
+        }
+
+        .table-component__table__head{
+            display: table-row;
+            background-color: $panelBackgroundColor;
+            color: white;
+            text-transform: uppercase;
+            white-space: nowrap;
+            font-size: .95em;
+            min-width: 100%;
+            font-weight: bold;
+        }
+
+        .table-component__table__body{
+            display: table-row-group;
+
+            >div.table-component__row:hover{
+                background-color: $activeRowBackground;
+            }
+
+            >div{
+                display: table-row;
+            }
+
+            >div:nth-child(even) {
+                background-color: $evenRowBackground;
+            }
+
+            >div.table-component__active_row{
+                background-color: $activeRowBackground;
+            }
+        }
+
+        .table-component__th,
+        .table-component__td {
+            display: table-cell;
+            padding: .75em 1.25em;
+            text-align: left;
+            position: relative;
+
+            /* Column titles for small screens */
+            h6 {
+                display: none;
+            }
+        }
+
+        .table-component__th--sort,
+        .table-component__th--sort-asc,
+        .table-component__th--sort-desc {
+            text-decoration: underline;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .table-component__th--sort-asc:after,
+        .table-component__th--sort-desc:after {
+            position: absolute;
+            left: .25em;
+            display: inline-block;
+        }
+
+        .table-component__th--sort-asc:after {
+            content: '↑';
+        }
+
+        .table-component__th--sort-desc:after {
+            content: '↓';
+        }
+    }
+
+    .table-component__message {
+        color: $messageColor;
+        font-style: italic;
+    }
+
+    .pagination {
+        display: flex;
+        padding-left: 0;
+        list-style: none;
+        margin-top: 20px;
+
+        li{
+            a {
+                background: $textInvertedColor;
+                color: $textColor;
+                padding: 8px 14px;
+                font-size: 15px;
+                font-weight: bold;
+                border: 1px solid $borderColor;
+                border-left: none;
+                cursor: pointer;
+            }
+
+            a:hover {
+                background: $activeRowBackground;
+            }
+        }
+
+        li:first-child a{
+            border-left: 1px solid $borderColor;
+        }
+
+        li.active{
+            a{
+                background: $buttonBackground;
+                color: $textInvertedColor;
+            }
+
+            a:hover {
+                background: $activeRowBackground;
+                color: $textColor;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 992px) {
+
+    .table-component {
+
+        .table-component__table{
+            display: block;
+
+            .table-component__table__head{
+                display: none;
+            }
+
+            .table-component__table__body{
+                display: block;
+
+                >div{
+                    display: flex;
+                    width: 100%;
+                    flex-wrap: wrap;
+                }
+
+                .table-component__td {
+                    display: block;
+                    width: 50%;
+
+                    >:first-child {
+                        width: 100%;
+                    }
+
+                    h6{
+                        display: block;
+                    }
+                }
+            }
+
+        }
+
+    }
+}

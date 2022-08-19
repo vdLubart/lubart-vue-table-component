@@ -1,12 +1,12 @@
 <template>
-    <tr @click="$emit('rowClick', row)">
+    <div :class="{ 'table-component__active_row': this.isActive }" class="table-component__row" @click="emitRowClick">
         <table-cell
             v-for="column in visibleColumns"
             :row="row"
             :column="column"
             :key="column.id"
         ></table-cell>
-    </tr>
+    </div>
 </template>
 
 <script>
@@ -14,6 +14,10 @@
 
     export default {
         props: ['columns', 'row'],
+
+        data: () => {
+            return {isActive: false}
+        },
 
         components: {
             TableCell,
@@ -23,6 +27,16 @@
             visibleColumns() {
                 return this.columns.filter(column => ! column.hidden);
             },
+
+            rowId(){
+                return this.row.data.rowId;
+            }
         },
+
+        methods: {
+            emitRowClick(row) {
+                this.$parent.emitRowClick(this);
+            }
+        }
     };
 </script>

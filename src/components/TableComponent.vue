@@ -1,26 +1,30 @@
 <template>
     <div class="table-component">
-        <div v-if="showFilter && filterableColumnExists" class="table-component__filter">
-            <input
-                    :class="fullFilterInputClass"
-                    type="text"
-                    v-model="filter"
-                    :placeholder="filterPlaceholder"
-            >
-            <a
-                    v-if="filter"
-                    @click="filter = ''"
-                    class="table-component__filter__clear"
-            >×</a>
+        <div v-if="showFilter && filterableColumnExists" class="table-component__filter ">
+            <div v-if="searchComponent === null">
+                <input-text
+                        :class="filterInputClass"
+                        name="filter"
+                        :without-label="true"
+                        :no-wrap="true"
+                        v-model="filter"
+                        :placeholder="filterPlaceholder"
+                ></input-text>
+                <a
+                        v-if="filter"
+                        @click="filter = ''"
+                        class="table-component__filter__clear"
+                >×</a>
+            </div>
+            <component v-else :is="searchComponent"></component>
         </div>
 
         <div class="table-component__table-wrapper">
-            <table :class="fullTableClass">
+            <div :class="fullTableClass">
                 <caption v-if="showCaption" class="table-component__table__caption" role="alert" aria-live="polite">
                     {{ ariaCaption }}
                 </caption>
-                <thead :class="fullTableHeadClass">
-                <tr>
+                <div :class="fullTableHeadClass">
                     <table-column-header
                             @click="changeSorting"
                             v-for="column in columns"
@@ -28,25 +32,23 @@
                             :sort="sort"
                             :column="column"
                     ></table-column-header>
-                </tr>
-                </thead>
-                <tbody :class="fullTableBodyClass">
-                <table-row
-                        v-for="row in displayedRows"
-                        :key="row.vueTableComponentInternalRowId"
-                        :row="row"
-                        :columns="columns"
-						@rowClick="emitRowClick"
-                ></table-row>
-                </tbody>
+                </div>
+                <div :class="fullTableBodyClass">
+                    <table-row
+                            v-for="row in displayedRows"
+                            :key="row.vueTableComponentInternalRowId"
+                            :row="row"
+                            :columns="columns"
+                    ></table-row>
+                </div>
                 <tfoot>
                     <slot name="tfoot" :rows="rows"></slot>
                 </tfoot>
-            </table>
+            </div>
         </div>
 
         <div v-if="displayedRows.length === 0" class="table-component__message">
-            {{ filterNoResults }}
+            {{ message }}
         </div>
 
 
@@ -67,12 +69,14 @@
     import settings from '../settings';
     import Pagination from './Pagination';
     import { classList, pick } from '../helpers';
+    import { InputText } from 'lubart-input-component';
 
     export default {
         components: {
             TableColumnHeader,
             TableRow,
             Pagination,
+            InputText
         },
 
         props: {
@@ -93,12 +97,19 @@
             filterInputClass: { default: () => settings.filterInputClass },
             filterPlaceholder: { default: () => settings.filterPlaceholder },
             filterNoResults: { default: () => settings.filterNoResults },
+            loadingResults: { default: () => settings.loadingResults },
+
+            filterData: { default: '' },
+            extraFilterData: {default: () => ({})},
+
+            externalForm: {default: () => null},
         },
 
         data: () => ({
             columns: [],
             rows: [],
             filter: '',
+            extraFilter: {},
             sort: {
                 fieldName: '',
                 order: '',
@@ -106,13 +117,21 @@
             pagination: null,
 
             localSettings: {},
+
+            activeRow: null,
+
+            message: "",
+
+            searchComponent: null
         }),
 
         created() {
             this.sort.fieldName = this.sortBy;
             this.sort.order = this.sortOrder;
-
-            this.restoreState();
+            this.filter = this.filterData;
+            this.extraFilter = this.extraFilterData;
+            this.searchComponent = this.externalForm;
+            this.message = this.filterNoResults;
         },
 
         async mounted() {
@@ -138,12 +157,17 @@
         },
 
         watch: {
-            filter() {
+            filter: 'applyFilters',
+
+            extraFilter: {
+                handler: 'applyFilters',
+                deep: true
+            },
+
+            isTracked() {
                 if (!this.usesLocalData) {
                     this.mapDataToRows();
                 }
-
-                this.saveState();
             },
 
             data() {
@@ -164,10 +188,6 @@
 
             fullTableBodyClass() {
                 return classList('table-component__table__body', this.tbodyClass);
-            },
-
-            fullFilterInputClass() {
-                return classList('table-component__filter__field', this.filterInputClass);
             },
 
             ariaCaption() {
@@ -229,10 +249,18 @@
                 return this.cacheKey
                     ? `vue-table-component.${this.cacheKey}`
                     : `vue-table-component.${window.location.host}${window.location.pathname}${this.cacheKey}`;
-            },
+            }
         },
 
         methods: {
+            applyFilters(){
+                if (!this.usesLocalData) {
+                    this.mapDataToRows();
+                }
+
+                this.saveState();
+            },
+
             async pageChange(page) {
                 this.pagination.currentPage = page;
 
@@ -240,9 +268,13 @@
             },
 
             async mapDataToRows() {
+                this.message = this.loadingResults;
+
                 const data = this.usesLocalData
                     ? this.prepareLocalData()
                     : await this.fetchServerData();
+
+                this.message = this.filterNoResults;
 
                 let rowId = 0;
 
@@ -267,6 +299,7 @@
                     filter: this.filter,
                     sort: this.sort,
                     page: page,
+                    extra: this.extraFilter
                 });
 
                 this.pagination = response.pagination;
@@ -314,10 +347,9 @@
                 this.saveState();
             },
 
-			emitRowClick(row) {
-				this.$emit('rowClick', row);
-				this.$emit('row-click', row);
-			}
+            emitRowClick(row) {
+                this.$emit('row-click', row);
+            }
         },
     };
 </script>

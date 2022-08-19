@@ -3,10 +3,11 @@ const settings = {
     theadClass: '',
     tbodyClass: '',
     headerClass: '',
-    cellClass: '',
+    cellClass: 'align-middle',
     filterInputClass: '',
     filterPlaceholder: 'Filter table…',
     filterNoResults: 'There are no matching rows',
+    loadingResults: 'Loading data…'
 };
 
 export function mergeSettings(newSettings) {

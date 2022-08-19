@@ -1,8 +1,8 @@
 {
-  "name": "vue-table-component",
-  "version": "1.9.2",
+  "name": "lubart-vue-table-component",
+  "version": "1.10.0",
   "description": "A straightforward Vue component to filter and sort tables",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "jsnext:main": "src/index.js",
   "scripts": {
     "start": "webpack-dev-server --config docs/webpack.config.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/spatie/vue-table-component.git"
+    "url": "https://github.com/vdLubart/lubart-vue-table-component.git"
   },
   "keywords": [
     "spatie"
@@ -43,6 +43,8 @@
     "jest-serializer-html": "^4.0.0",
     "jest-vue-preprocessor": "^0.2.0",
     "moment": "^2.18.1",
+    "sass": "^1.54.4",
+    "sass-loader": "^13.0.2",
     "simulant": "^0.2.2",
     "vue": "^2.5.0",
     "vue-loader": "^12.0.3",
@@ -50,6 +52,10 @@
     "webpack": "^2.3.3",
     "webpack-dev-server": "^2.4.2",
     "webpack-merge": "^4.1.0"
+  },
+  "dependencies": {
+    "moment": "^2.18.1",
+    "lubart-input-component": "^1.0.0"
   },
   "jest": {
     "testRegex": "test.js$",
