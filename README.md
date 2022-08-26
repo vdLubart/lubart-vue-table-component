@@ -76,7 +76,7 @@ project and imported through the property `external-form` like follow:
 
 ...
 
-import TableComponent from 'lubart-table-component';
+import TableComponent from 'lubart-vue-table-component';
 import CustomSearchForm from './components/CustomSearchForm';
 
 TableComponent.install(Vue);

@@ -69,7 +69,7 @@
     import settings from '../settings';
     import Pagination from './Pagination';
     import { classList, pick } from '../helpers';
-    import { InputText } from 'lubart-input-component';
+    import { InputText } from 'lubart-vue-input-component';
 
     export default {
         components: {
